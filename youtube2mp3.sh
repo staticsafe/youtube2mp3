@@ -50,7 +50,7 @@ if [[ $return_code -eq 0 ]]; then
 		fi
 
 		ffmpeg -i $video_id.$ext "$HOME/$video_title.wav"
-		lame $HOME/"$video_title".wav $dest_dir/"$video_title".mp3
+		lame -b 320 -h --cbr $HOME/"$video_title".wav $dest_dir/"$video_title".mp3
 		rm $video_id.$ext $HOME/"$video_title".wav
 
 	    zenity --width=260 --height=130 --title "YouTube MP3/OGG Extractor" --info --text "Your MP3 file is ready."
