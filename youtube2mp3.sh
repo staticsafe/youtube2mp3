@@ -11,18 +11,20 @@ regex='v=(.*)'
 dest_dir=$(zenity --file-selection --directory)
 if [[ $return_code -eq 0 ]]; then
 	if
-		[[ $format =~ "OGG" ]] ; then
-		video_id=${BASH_REMATCH[1]}
+		[[ "$format" =~ "OGG" ]] ; then
+		video_id=(echo $address | sed 's/http.*.?v=//')
 		video_id=$(echo $video_id | cut -d'&' -f1)
 		video_title="$(youtube-dl --get-title $address)"
 		youtube-dl $address
 
 		if [ -e $video_id.flv ]; then
 			ext="flv"
-		fi
-
-		if [ -e $video_id.mp4 ]; then
+		elif 
+			[ -e $video_id.mp4 ]; then
 			ext="mp4"
+		else
+			echo "Failed."
+			exit
 		fi
 
 		ffmpeg -i $video_id.$ext $HOME/"$video_title".wav
@@ -32,17 +34,19 @@ if [[ $return_code -eq 0 ]]; then
 	    zenity --width=260 --height=130 --title "YouTube MP3/OGG Extractor" --info --text "Your OGG file is ready."
 	elif
 		[[ "$format" =~ "MP3" ]]; then
-		video_id=${BASH_REMATCH[1]}
+		video_id=(echo $address | sed 's/http.*.?v=//')
 		video_id=$(echo $video_id | cut -d'&' -f1)
 		video_title="$(youtube-dl --get-title $address)"
 		youtube-dl $address
 
 		if [ -e $video_id.flv ]; then
 			ext="flv"
-		fi
-
-		if [ -e $video_id.mp4 ]; then
+		elif 
+			[ -e $video_id.mp4 ]; then
 			ext="mp4"
+		else
+			echo "Failed."
+			exit
 		fi
 
 		ffmpeg -i $video_id.$ext $HOME/"$video_title".wav
